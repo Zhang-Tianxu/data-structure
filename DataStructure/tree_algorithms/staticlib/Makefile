@@ -7,9 +7,9 @@ LIBPATH=./lib/
 
 vpath %.h ./include 
 
-OBJS=binary_tree.o
+OBJS=binary_tree.o binary_sort_tree.o
 
-SRCS=binary_tree.cpp
+SRCS=binary_tree.cpp binary_sort_tree.cpp
 
 $(OBJS):$(SRCS)
 	$(CXX) $(CXXFLAGS) $(INCLUDE1) $(INCLUDE2) -c $^
