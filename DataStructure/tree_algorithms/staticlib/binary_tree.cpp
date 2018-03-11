@@ -113,7 +113,7 @@ int BiTree::Depth()
 }
 void Print(BiTNode* p)
 {
-	std::cout <<std::setw(5) << p->data;
+	std::cout <<std::setw(10) << p->data;
 }
 
 void BiTree::PreOrderTraverse(BiTNode* p,void (*visit)(BiTNode*))

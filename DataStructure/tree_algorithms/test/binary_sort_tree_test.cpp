@@ -10,13 +10,28 @@ int main()
 	else 
 		cout << "The binary tree is not empty!" <<endl;
 	ElemType input;
-	cout << "Please enter the data you want insert into the root of tree."<<endl;
+	cout << "Please input the num you want insert in BST\n(input 99999 to end the input\n";
 	cin >> input;
-	T.Append(input);
-	T.Append(2);
-	T.Append(3);
-	T.Append(4);
-	T.Append(5);
+	while(input != 99999)
+	{
+		T.InsertElem(input);
+		cout << "Please input the num you want insert in BST\n(input 99999 to end the input\n";
+		cin >> input;
+	}
+	/*T.Append(input);
+	  T.Append(2);
+	  T.Append(3);
+	  T.Append(4);
+	  T.Append(5);*/
+
+	cout << "Please input the num you want search for:";
+	cin >> input;
+	if(T.Search(input))
+		cout << "The num you search for is exist\n";
+	else
+		cout << "The num you search for is not exit\n";
+
+
 	cout << "The depth of binary tree is " << T.Depth()<<endl;
 	cout << "The pre-order-traverse of binary tree is:" <<endl;
 	T.PreOrderTraverse(T.Root(),Print);
