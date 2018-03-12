@@ -1,43 +1,60 @@
 //binary_sort_tree.cpp
 #include <iostream>
 #include "binary_sort_tree.h"
+#include "linked_queue.h"
 
 
-/*BiTNode* BiSortTree::getFather(BiTNode* p)
-  {
 
-  }
-
-  BiTNode* BiSortTree::getPresequence(BiTNode* p)
-  {
-  BiTNode* pre;
-  if(p->lchild==NULL)
-  return NULL;
-  else
-  {
-  pre = p->lchild;
-  while(pre->rchild)
-  pre = pre->rchild;
-  return pre;
-  }
-  }
-
-  BiTNode* BiSortTree::getSubsequence(BiTNode* p)
-  {//get the subsequence of p and return it
-//if the subsequence of p is empty ,return NULL
-
-BiTNode* sub;
-if(p->rchild==NULL)
-return NULL;
-else
+BiTNode* BiSortTree::getParents(BiTNode* p)
 {
-sub = p->rchild;
-while(sub->lchild)
-sub = sub->lchild;
-return sub;
+	LQ<BiTNode*> Q;
+	BiTNode* q;
+	q = this->Root();
+	Q.EnQueue(q);
+	while(!Q.isEmpty())
+	{
+		Q.DeQueue(q);
+		if(q->lchild==p||q->rchild==p)
+			return q;
+		if(q->lchild)
+			Q.EnQueue(q->lchild);
+		if(q->rchild)
+			Q.EnQueue(q->rchild);
+	}
+	std::cout << "There has no father of " << p->data << "\n";
+	return NULL;
 }
+
+BiTNode* BiSortTree::getPresequence(BiTNode* p)
+{
+	BiTNode* pre;
+	if(p->lchild==NULL)
+		return NULL;
+	else
+	{
+		pre = p->lchild;
+		while(pre->rchild)
+			pre = pre->rchild;
+		return pre;
+	}
 }
-*/
+
+BiTNode* BiSortTree::getSubsequence(BiTNode* p)
+{//get the subsequence of p and return it
+	//if the subsequence of p is empty ,return NULL
+
+	BiTNode* sub;
+	if(p->rchild==NULL)
+		return NULL;
+	else
+	{
+		sub = p->rchild;
+		while(sub->lchild)
+			sub = sub->lchild;
+		return sub;
+	}
+}
+
 
 bool BiSortTree::InsertElem(ElemType e)
 {//insert element e into binary sort tree when it doesn't exist in the binary sort tree and maintain it as a binary sort tree
@@ -91,10 +108,13 @@ bool BiSortTree::InsertElem(ElemType e)
 	}
 }
 
-bool BiSortTree::Search(ElemType e)
+BiTNode* BiSortTree::Search(ElemType e)
 {//search element e in binary tree
 	if(this->Empty())
-		return false;
+	{
+		std::cout << "The BST is Empty!\n";
+		return NULL;
+	}
 	BiTNode* p;
 	p=this->Root();
 	while(p)
@@ -104,92 +124,86 @@ bool BiSortTree::Search(ElemType e)
 			if(p->lchild)
 				p=p->lchild;
 			else
-				return false;
+			{
+				std::cout << "The element you search for is not exist!\n";
+				return NULL;
+			}
 		}
 		else if(e>p->data)
 		{
 			if(p->rchild)
 				p=p->rchild;
 			else
-				return false;
+			{
+				std::cout << "The element you search for is not exist!\n";
+				return NULL;
+			}
 		}
 		else
-			return true;
+			return p;
 	}
 }
-/*
-   bool BiSortTree::DeleteElem(ElemType e)
-   {//delete element e from binary sort tree and maintain it as a binary sort tree
-   using std::cout;
-   using std::endl;
-   if(root == NULL)
-   {
-   cout << "The binary sort tree is empty,delete failed!" << endl;
-   return false;
-   }
-   if(root->data == e)
-   {
-   BiTNode* p = getSubsequence(root);
-   p->lchild = root->lchild;
-   p->rchild = root->rchild;
-   }
-   BiTNode* q;
-   BiTNode* p;
-   q = root;
-   if(e<root->data)
-   {
-   if(root->lchild)
-   p=root->lchild;
-   else
-   {
-   cout << "There is no element " << e << " in the binary sort tree,delete failed!" <<endl;
-   return false;
-   }
-   }
-   else
-   {
-   if(root->rchild)
-   p=root->rchild;
-   else
-   {
 
-   cout << "There is no element " << e << " in the binary sort tree,delete failed!" <<endl;
-   return false;
-   }
-   }
-//now q is the parents of p
-//we have to maintain it until we find e
-while(p)
-{
-if(e<p->data)
-{
-if(p->lchild)
-p=p->lchild;
-else
-{
-cout << "There is no element " << e << " in the binary sort tree,delete failed!" <<endl;
-return false;
-}
+bool BiSortTree::DeleteElem(ElemType e)
+{//delete element e from binary sort tree and maintain it as a binary sort tree
+	using std::cout;
+	using std::endl;
+	if(this->Empty())
+	{
+		cout << "The binary sort tree is empty,delete failed!" << endl;
+		return false;
+	
+	BiTNode* d;
+	d = Search(e);
+	if(d)
+	{
+		BiTNode* dp = getParents(d);
+		if(d->lchild==NULL&&d->rchild==NULL)
+			//if the element we want delete hasn't child
+			//delete it directly
+		{
+			if(d==dp->lchild)
+				dp->lchild = NULL;
+			else
+				dp->rchild = NULL;
+			delete d;
+		}
+		else if(d->lchild==NULL)
+			//if the element we want delete hasn't lift child
+			//replace it by it's right child directly
+		{
+			if(d==dp->lchild)
+				dp->lchild = d->rchild;
+			else
+				dp->rchild = d->rchild;
+			delete d;
+		}
+		else if(d->rchild==NULL)
+			//if the element we want delete hasn't right child
+			//replace it by it's lift child directly
+		{
+			if(d==dp->lchild)
+				dp->lchild = d->lchild;
+			else
+				dp->rchild = d->lchild;
+			delete d;
+		}
+		else
+		{
+			//if the has both right child and lift child
+			//replace it by it's sub-sequence and delete it's sub-sequence.(you can replace it by it's pre-sequence if you like.)
+			BiTNode* ss;
+			ss = getSubsequence(d);//ss hasn't lift child for sure
+			d->data = ss->data;//replace d by it's sub-sequence
+			dp = getParents(ss);//delete ss
+			if(ss==dp->lchild)
+				dp->lchild = ss->rchild;
+			else
+				dp->rchild = ss->rchild;
+			delete ss;
 
+		}
+	}
+	else
+		cout << "The element you want delete is not exist!" << endl;
 }
-else if(e>p->data)
-{
-if(p->rchild)
-p=p->rchild;
-else
-{
-cout << "There is no element " << e << " in the binary sort tree,delete failed!" <<endl;
-return false;
-}
-}
-else
-{//find the subsequence of p and replace p by it
-BiTNode* tmp;
-tmp = getSubsequence(p);
-p->data = tmp->data;
-delete tmp;
-cout << "delete success!" <<endl;
-return true;
-}
-}
-}*/
